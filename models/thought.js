@@ -1,5 +1,8 @@
 const { Schema, model } = require('mongoose');
 
+//Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
+
+
 // Schema to create a thought model
 const thoughtSchema = new Schema(
   {
@@ -14,7 +17,7 @@ const thoughtSchema = new Schema(
       type: Date,
       default: Date.now,
             // Sets a default value of 12 weeks from now
-      // default: () => new Date(+new Date() + 84 * 24 * 60 * 60 * 1000),
+      default: () => new Date(+new Date() + 84 * 24 * 60 * 60 * 1000),
 
 
 
@@ -41,3 +44,5 @@ const thoughtSchema = new Schema(
 const Thought = model('thought', thoughtSchema);
 
 module.exports = Thought;
+
+//This will not be a model, but rather will be used as the reaction field's subdocument schema in the Thought model.

@@ -14,24 +14,30 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,    },
-     // * Must match a valid email address (look into Mongoose's matching validation)
+      unique: true,
+      match: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
     },
 
-  {
+
+
     // equivelent to making an include or join "parent = users" and "child = thought"; need to add thoughtSchema array
-    // thought: [thoughtSchema],
-    type: Schema.Types.ObjectId,
-    ref: 'thought',
 
-  },
-  {
-        // equivelent to making an include or selfjoin "parent = users" and "child = friends; need to add userSchema array
-    // friends: [userSchema],
-    type: Schema.Types.ObjectId,
-    ref: 'user',
-  },
+    thought: [{
+      type: Schema.Types.ObjectId,
+      ref: 'thought',
+    },
+    ],
 
+
+    // equivelent to making an include or selfjoin "parent = users" and "child = friends; need to add userSchema array
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
+
+    ],
+  },
   {
     toJSON: {
       getters: true,
@@ -41,4 +47,8 @@ const userSchema = new Schema(
 
 const User = model('user', userSchema);
 
+userSchema.virtual('frie')
+
 module.exports = User;
+
+//Create a virtual called friendCount that retrieves the length of the user's friends array field on query.
