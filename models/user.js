@@ -21,22 +21,30 @@ const userSchema = new Schema(
 
 
     // equivelent to making an include or join "parent = users" and "child = thought"; need to add thoughtSchema array
+    // This is the array of _id values referencing the Thought model that already made
 
-    thought: [{
-      type: Schema.Types.ObjectId,
-      ref: 'thought',
-    },
-    ],
+    // //The first snippet expects an array of objects conforming to the "thoughtSchema."
+    thought: [thoughtSchema],
 
 
-    // equivelent to making an include or selfjoin "parent = users" and "child = friends; need to add userSchema array
-    friends: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
-      },
+    // The second snippet expects an array of ObjectIds, where each ObjectId is expected to refer to a document in the 'thought' collection. This implies that you are creating a reference or relationship between the current document and documents in the 'thought' collection.
+    // thought: [{
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'thought',
+    // },
+    // ],
 
-    ],
+
+    // equivalent to making an include or self-join "parent = users" and "child = friends; need to add userSchema array
+
+    friends: [userSchema],
+
+    // friends: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'user',
+    //   },
+    // ],
   },
   {
     toJSON: {
@@ -45,9 +53,13 @@ const userSchema = new Schema(
   }
 );
 
-const User = model('user', userSchema);
+//Create a virtual called friendCount that retrieves the length of the user's friends array field on query.
 
-userSchema.virtual('frie')
+userSchema.virtual('friendCount').get(function () {
+  return this.friends.length;
+});
+
+const User = model('user', userSchema);
 
 module.exports = User;
 

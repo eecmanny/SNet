@@ -16,8 +16,10 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-            // Sets a default value of 12 weeks from now
-      default: () => new Date(+new Date() + 84 * 24 * 60 * 60 * 1000),
+      get: function (timestamp) {
+        // Define a getter function to format the timestamp on query
+        return new Date(timestamp).toLocaleString(); 
+      },
 
 
 
@@ -26,6 +28,8 @@ const thoughtSchema = new Schema(
       type: String,
       required: true,
     },
+
+    //This implies that you are creating a reference or relationship between the current document and documents in the 'reaction' collection.
     reaction: [
       {
         type: Schema.Types.ObjectId,
@@ -41,8 +45,12 @@ const thoughtSchema = new Schema(
   }
 );
 
+// Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
+thoughtSchema.virtual('reactionCount').get(function () {
+  return this.reaction.length;
+});
+
 const Thought = model('thought', thoughtSchema);
 
 module.exports = Thought;
 
-//This will not be a model, but rather will be used as the reaction field's subdocument schema in the Thought model.

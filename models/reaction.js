@@ -1,6 +1,6 @@
 const { Schema, Types } = require('mongoose');
 
-const assignmentSchema = new Schema(
+const reactionSchema = new Schema(
   {
     reactionId: {
       type: Schema.Types.ObjectId,
@@ -9,26 +9,32 @@ const assignmentSchema = new Schema(
     reactionBody: {
       type: String,
       required: true,
-      maxlength: 50,
-      minlength: 4,
-      default: 'Unnamed assignment',
+      maxlength: 280,
+      minlength: 1,
+      // default: 'Unnamed reaction',
     },
     username: {
       type: Number,
       required: true,
-      default: () => Math.floor(Math.random() * (100 - 70 + 1) + 70),
     },
+
     createdAt: {
       type: Date,
       default: Date.now,
+      get: function (timestamp) {
+        // Define a getter function to format the timestamp on query
+        return new Date(timestamp).toLocaleString(); 
+      },
     },
   },
   {
     toJSON: {
-      getters: true,
+      virtuals: true,
     },
     id: false,
   }
 );
 
-module.exports = assignmentSchema;
+const Reaction = modelE('reaction', reactionSchema);
+
+module.exports = Reaction;
