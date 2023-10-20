@@ -3,27 +3,27 @@ const { Reaction, Thought, User } = require('../models');
 
 // Aggregate function to get the number of users overall
 //When the agreegate is empty it finds all and give a numeric value
-const headCount = async () => {
+const userCount = async () => {
   const numberOfUsers = await User.aggregate()
     .count('userCount');
   return numberOfUsers;
 }
 
-// Aggregate function for getting the overall grade using $avg
-const grade = async (userId) =>
-  user.aggregate([
-    // only include the given user by using $match
-    { $match: { _id: new ObjectId(userId) } },
-    {
-      $unwind: '$assignments',
-    },
-    {
-      $group: {
-        _id: new ObjectId(userId),
-        overallGrade: { $avg: '$assignments.score' },
-      },
-    },
-  ]);
+// // Aggregate function for getting the overall thought using $avg
+// const thought = async (userId) =>
+//   user.aggregate([
+//     // only include the given user by using $match
+//     { $match: { _id: new ObjectId(userId) } },
+//     {
+//       $unwind: '$assignments',
+//     },
+//     {
+//       $group: {
+//         _id: new ObjectId(userId),
+//         overallThought: { $avg: '$assignments.score' },
+//       },
+//     },
+//   ]);
 
 module.exports = {
   // Get all users
@@ -33,7 +33,7 @@ module.exports = {
 
       const userObj = {
         users,
-        headCount: await headCount(),
+        userCount: await userCount(),
       };
 
       res.json(userObj);
@@ -42,8 +42,9 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
+
   // Get a single user
-  async getSingleuser(req, res) {
+  async getSingleUser(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.userId })
       // when using "-__v" it's excluding the etra mongdb data and returning clean/ un-altered data
@@ -55,15 +56,37 @@ module.exports = {
 
       res.json({
         user,
-        grade: await grade(req.params.userId),
+        thought: await thought(req.params.userId),
       });
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
     }
   },
+
+    // Get a single user
+    async updateSingleUser(req, res) {
+      try {
+        const user = await User.findOne({ _id: req.params.userId })
+        // when using "-__v" it's excluding the extra mongodb data and returning clean/ un-altered data
+          .select('-__v');
+  
+        if (!user) {
+          return res.status(404).json({ message: 'No user with that ID' })
+        }
+  
+        res.json({
+          user,
+          thought: await thought(req.params.userId),
+        });
+      } catch (err) {
+        console.log(err);
+        return res.status(500).json(err);
+      }
+    },
+
   // create a new user
-  async createuser(req, res) {
+  async createUser(req, res) {
     try {
       const user = await user.create(req.body);
       res.json(user);
@@ -71,6 +94,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
   // Delete a user and remove them from the course
   async deleteUser(req, res) {
     try {
@@ -100,14 +124,14 @@ module.exports = {
   },
 
   // Add an assignment to a user
-  async addAssignment(req, res) {
+  async addFriend(req, res) {
     console.log('You are adding an assignment');
     console.log(req.body);
 
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $addToSet: { assignments: req.body } },
+        { $addToSet: { friends: req.body } },
         { runValidators: true, new: true }
       );
 
@@ -123,11 +147,11 @@ module.exports = {
     }
   },
   // Remove assignment from a user
-  async removeAssignment(req, res) {
+  async removeFriend(req, res) {
     try {
       const user = await user.findOneAndUpdate(
         { _id: req.params.userId },
-        { $pull: { assignments: { assignmentId: req.params.assignmentId } } },
+        { $pull: { fiends: { friendId: req.params.assignmentId } } },
         { runValidators: true, new: true }
       );
 

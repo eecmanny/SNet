@@ -71,6 +71,22 @@ module.exports = {
     }
   },
 
+      // Delete a thought
+  async deleteThought(req, res) {
+    try {
+      const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+
+      if (!thought) {
+        res.status(404).json({ message: 'No course with that ID' });
+      }
+
+      await Thought.deleteMany({ _id: { $in: thought.reaction } });
+      res.json({ message: 'thought and reaction deleted!' });
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
     // Post a Thought's reaction
     async postSingleThoughtsReaction(req, res) {
       try {
@@ -88,20 +104,22 @@ module.exports = {
       }
     },
 
-      // Delete a thought
-  async deleteThought(req, res) {
-    try {
-      const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+    // Delete a Thought's reaction
+    async DeleteSingleThoughtsReaction(req, res) {
+      try {
+        const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId })
+          .select('-__v');
+  
+        if (!thought) {
+          return res.status(404).json({ message: 'No thought with that ID' });
+        }
 
-      if (!thought) {
-        res.status(404).json({ message: 'No course with that ID' });
+        await Thought.delete({ _id: { $in: thought.reaction } });
+        res.json(thought);
+      } catch (err) {
+        res.status(500).json(err);
       }
+    },
 
-      await Thought.deleteMany({ _id: { $in: thought.reaction } });
-      res.json({ message: 'thought and reaction deleted!' });
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
 };
 
