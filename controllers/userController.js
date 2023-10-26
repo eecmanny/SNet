@@ -29,14 +29,18 @@ module.exports = {
   // Get all users
   async getUsers(req, res) {
     try {
-      const users = await user.find();
+      const users = await User.find();
 
-      const userObj = {
-        users,
-        userCount: await userCount(),
-      };
+      // const userObj = {
+      //   users,
+      //   username: [User],
+      //   email: [User],
+      //   userCount: await userCount(),
+      //   thoughts: [Thought],
+      //   friends: [User]
+      // };
 
-      res.json(userObj);
+      res.json(users);
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
@@ -56,7 +60,7 @@ module.exports = {
 
       res.json({
         user,
-        thought: await thought(req.params.userId),
+        // thought: await thought(req.params.userId),
       });
     } catch (err) {
       console.log(err);
@@ -88,7 +92,7 @@ module.exports = {
   // create a new user
   async createUser(req, res) {
     try {
-      const user = await user.create(req.body);
+      const user = await User.create(req.body);
       res.json(user);
     } catch (err) {
       res.status(500).json(err);
@@ -98,23 +102,23 @@ module.exports = {
   // Delete a user and remove them from the course
   async deleteUser(req, res) {
     try {
-      const user = await user.findOneAndRemove({ _id: req.params.userId });
+      const user = await User.findOneAndRemove({ _id: req.params.userId });
 
       if (!user) {
         return res.status(404).json({ message: 'No such user exists' });
       }
 
-      const course = await Course.findOneAndUpdate(
-        { users: req.params.userId },
-        { $pull: { users: req.params.userId } },
-        { new: true }
-      );
+      // const course = await Course.findOneAndUpdate(
+      //   { users: req.params.userId },
+      //   { $pull: { users: req.params.userId } },
+      //   { new: true }
+      // );
 
-      if (!course) {
-        return res.status(404).json({
-          message: 'user deleted, but no courses found',
-        });
-      }
+      // if (!thought) {
+      //   return res.status(404).json({
+      //     message: 'user deleted, but no thought found',
+      //   });
+      // }
 
       res.json({ message: 'user successfully deleted' });
     } catch (err) {
@@ -149,7 +153,7 @@ module.exports = {
   // Remove assignment from a user
   async removeFriend(req, res) {
     try {
-      const user = await user.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $pull: { fiends: { friendId: req.params.assignmentId } } },
         { runValidators: true, new: true }
