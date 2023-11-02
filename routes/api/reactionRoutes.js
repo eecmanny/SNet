@@ -6,7 +6,7 @@ const {
 } = require('../../controllers/reactionController');
 
 // /api/thought/:thoughtId/thoughtId/reactions
-router.route('/:thoughtId/reactions').get(getSingleReactions);
+// router.route('/:thoughtId/reactions').get(getSingleReactions);
 
 // /api/thought/:thoughtId/reactions
 router.route('/:thoughtId/reactions').post(postSingleReaction);
