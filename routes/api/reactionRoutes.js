@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {
-  getSingleReactions,
+  // getSingleReactions,
   postSingleReaction,
   DeleteSingleReaction,
 } = require('../../controllers/reactionController');
