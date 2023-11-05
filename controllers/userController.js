@@ -127,9 +127,9 @@ module.exports = {
     }
   },
 
-  // Add an assignment to a user
+  // Add an friend to a user
   async addFriend(req, res) {
-    console.log('You are adding an assignment');
+    console.log('You are adding a friend to a user');
     console.log(req.body);
 
     try {
@@ -150,24 +150,51 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Remove assignment from a user
-  async removeFriend(req, res) {
-    try {
-      const user = await User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { $pull: { fiends: { friendId: req.params.assignmentId } } },
-        { runValidators: true, new: true }
-      );
 
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: 'No user found with that ID :(' });
-      }
 
-      res.json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-};
+    // // Post a Thought's reaction
+    // async addFriend(req, res) {
+    //   try {
+    //     const friend = await User.update(req.body);
+
+    //     const user = await User.findOneAndUpdate(
+    //       { _id: req.params.userId },
+    //       { $push: { friends: friend._id } },
+    //       { runValidators: true, new: true }
+    //     );
+
+    //     if (!user) {
+    //       return res.status(404).json({ message: 'No user with that ID' });
+    //     }
+
+    //     res.json(user);
+    //   } catch (err) {
+    //     console.log(err);
+    //     res.status(500).json(err);
+    //   }
+    //     res.status(500).json(err);
+    //   }
+    // },
+  };
+
+
+  // // Remove assignment from a user
+  // async removeFriend(req, res) {
+  //   try {
+  //     const user = await User.findOneAndUpdate(
+  //       { _id: req.params.userId },
+  //       { $pull: { fiends: { friendId: req.params.userId } } },
+  //       { runValidators: true, new: true }
+  //     );
+
+  //     if (!user) {
+  //       return res
+  //         .status(404)
+  //         .json({ message: 'No user found with that ID :(' });
+  //     }
+
+  //     res.json(user);
+  //   } catch (err) {
+  //     res.status(500).json(err);
+  //   }
+  // },

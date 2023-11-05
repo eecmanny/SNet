@@ -17,8 +17,6 @@ const userSchema = new Schema(
       match: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
     },
 
-
-
     // equivelent to making an include or join "parent = users" and "child = thought"; need to add thoughtSchema array
     // This is the array of _id values referencing the Thought model that already made
 
