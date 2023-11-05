@@ -51,7 +51,7 @@ module.exports = {
   async getSingleUser(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.userId })
-      // when using "-__v" it's excluding the etra mongdb data and returning clean/ un-altered data
+        // when using "-__v" it's excluding the etra mongdb data and returning clean/ un-altered data
         .select('-__v');
 
       if (!user) {
@@ -68,26 +68,26 @@ module.exports = {
     }
   },
 
-    // Get a single user
-    async updateSingleUser(req, res) {
-      try {
-        const user = await User.findOne({ _id: req.params.userId })
+  // Get a single user
+  async updateSingleUser(req, res) {
+    try {
+      const user = await User.findOne({ _id: req.params.userId })
         // when using "-__v" it's excluding the extra mongodb data and returning clean/ un-altered data
-          .select('-__v');
-  
-        if (!user) {
-          return res.status(404).json({ message: 'No user with that ID' })
-        }
-  
-        res.json({
-          user,
-          thought: await thought(req.params.userId),
-        });
-      } catch (err) {
-        console.log(err);
-        return res.status(500).json(err);
+        .select('-__v');
+
+      if (!user) {
+        return res.status(404).json({ message: 'No user with that ID' })
       }
-    },
+
+      res.json({
+        user,
+        thought: await thought(req.params.userId),
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  },
 
   // create a new user
   async createUser(req, res) {
@@ -127,63 +127,15 @@ module.exports = {
     }
   },
 
-  // Add an friend to a user
-  async addFriend(req, res) {
-    console.log('You are adding a friend to a user');
-    console.log(req.body);
+  // // Add an friend to a user
+  // async addFriend(req, res) {
+  //   console.log('You are adding a friend to a user');
+  //   console.log(req.body);
 
-    try {
-      const user = await User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { $addToSet: { friends: req.body } },
-        { runValidators: true, new: true }
-      );
-
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: 'No user found with that ID :(' });
-      }
-
-      res.json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-
-
-    // // Post a Thought's reaction
-    // async addFriend(req, res) {
-    //   try {
-    //     const friend = await User.update(req.body);
-
-    //     const user = await User.findOneAndUpdate(
-    //       { _id: req.params.userId },
-    //       { $push: { friends: friend._id } },
-    //       { runValidators: true, new: true }
-    //     );
-
-    //     if (!user) {
-    //       return res.status(404).json({ message: 'No user with that ID' });
-    //     }
-
-    //     res.json(user);
-    //   } catch (err) {
-    //     console.log(err);
-    //     res.status(500).json(err);
-    //   }
-    //     res.status(500).json(err);
-    //   }
-    // },
-  };
-
-
-  // // Remove assignment from a user
-  // async removeFriend(req, res) {
   //   try {
   //     const user = await User.findOneAndUpdate(
   //       { _id: req.params.userId },
-  //       { $pull: { fiends: { friendId: req.params.userId } } },
+  //       { $addToSet: { friends: req.body } },
   //       { runValidators: true, new: true }
   //     );
 
@@ -198,3 +150,71 @@ module.exports = {
   //     res.status(500).json(err);
   //   }
   // },
+
+
+  // // Post a Thought's reaction
+  // async addFriend(req, res) {
+  //   try {
+  //     const friend = await User.update(req.body);
+
+  //     const user = await User.findOneAndUpdate(
+  //       { _id: req.params.userId },
+  //       { $push: { friends: friend._id } },
+  //       { runValidators: true, new: true }
+  //     );
+
+  //     if (!user) {
+  //       return res.status(404).json({ message: 'No user with that ID' });
+  //     }
+
+  //     res.json(user);
+  //   } catch (err) {
+  //     console.log(err);
+  //     res.status(500).json(err);
+  //   }
+  //     res.status(500).json(err);
+  //   }
+  // },
+
+
+  // Post a users's friend
+  async postSingleFriend(req, res) {
+    try {
+      const friend = await User.create(req.body);
+
+      const user =
+        await User.findOneAndUpdate(
+          { _id: req.params.userId },
+          { $push: { friend: friend._id } },
+          { runValidators: true, new: true }
+        );
+      if (!user) {
+        return res.status(404).json({ message: 'No User with that ID' });
+      }
+
+      res.json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  // delete a users's friend
+  async deleteSingleFriend(req, res) {
+    try {
+      const thought = await User.findOneAndUpdate({ _id: req.params.friendId }
+        , { $pull: { firend: req.params.friendId } },
+        { runValidators: true, new: true })
+        .select('-__v');
+
+      res.json(thought);
+
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  },
+
+};
+
+

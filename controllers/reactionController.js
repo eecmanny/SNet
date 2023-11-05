@@ -36,25 +36,6 @@ const { Reaction, Thought, User } = require('../models');
       }
     },
 
-    // Delete a Thought's reaction
-    // async DeleteSingleReaction(req, res) {
-    //   try {
-    //     const reaction = await Thought.findOne({ _id: req.params.thoughtId })
-    //       .select('-__v');
-  
-    //     if (!reaction) {
-    //       return res.status(404).json({ message: 'No thought with that ID' });
-    //     }
-    //     console.log(reaction);
-
-    //     await Reaction.deleteMany({ _id: { $in: reaction.reaction } });
-    //     res.json(reaction);
-    //   } catch (err) {
-    //     console.log(err);
-    //     res.status(500).json(err);
-    //   }
-    // },
-
     async DeleteSingleReaction(req, res) {
         try {
           const thought = await Thought.findOneAndUpdate({ _id: req.params.thoughtId }
