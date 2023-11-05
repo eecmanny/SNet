@@ -127,76 +127,35 @@ module.exports = {
     }
   },
 
-  // // Add an friend to a user
-  // async addFriend(req, res) {
-  //   console.log('You are adding a friend to a user');
-  //   console.log(req.body);
+  // Post a user's friend and join that friend to the user
+async postSingleFriend(req, res) {
+  try {
+    console.log(req.params.userId, "userId");
+    console.log(req.params.friendId, "friendId");
 
-  //   try {
-  //     const user = await User.findOneAndUpdate(
-  //       { _id: req.params.userId },
-  //       { $addToSet: { friends: req.body } },
-  //       { runValidators: true, new: true }
-  //     );
+    // Create the friend using the data in the request body
+    const friend = await User.create(req.body);
 
-  //     if (!user) {
-  //       return res
-  //         .status(404)
-  //         .json({ message: 'No user found with that ID :(' });
-  //     }
+    // Find the user by their ID and update their 'friends' array to include the new friend
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.userId },
+      //500 error said I need username and password????
+      { email: req.body.email},
+      {username: req.body.username},
+      { $push: { friends: friend._id } }, // Assuming 'friends' is an array in your User model
+      { runValidators: true, new: true }
+    );
 
-  //     res.json(user);
-  //   } catch (err) {
-  //     res.status(500).json(err);
-  //   }
-  // },
-
-
-  // // Post a Thought's reaction
-  // async addFriend(req, res) {
-  //   try {
-  //     const friend = await User.update(req.body);
-
-  //     const user = await User.findOneAndUpdate(
-  //       { _id: req.params.userId },
-  //       { $push: { friends: friend._id } },
-  //       { runValidators: true, new: true }
-  //     );
-
-  //     if (!user) {
-  //       return res.status(404).json({ message: 'No user with that ID' });
-  //     }
-
-  //     res.json(user);
-  //   } catch (err) {
-  //     console.log(err);
-  //     res.status(500).json(err);
-  //   }
-  //     res.status(500).json(err);
-  //   }
-  // },
-
-
-  // Post a users's friend
-  async postSingleFriend(req, res) {
-    try {
-      const friend = await User.create(req.body);
-
-      const user =
-        await User.findOneAndUpdate(
-          { _id: req.params.userId },
-          { $push: { friend: friend._id } },
-          { runValidators: true, new: true }
-        );
-      if (!user) {
-        return res.status(404).json({ message: 'No User with that ID' });
-      }
-
-      res.json(user);
-    } catch (err) {
-      res.status(500).json(err);
+    if (!user) {
+      return res.status(404).json({ message: 'No User with that ID' });
     }
-  },
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+},
+
 
   // delete a users's friend
   async deleteSingleFriend(req, res) {
