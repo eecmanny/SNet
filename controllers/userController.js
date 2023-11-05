@@ -133,16 +133,10 @@ async postSingleFriend(req, res) {
     console.log(req.params.userId, "userId");
     console.log(req.params.friendId, "friendId");
 
-    // Create the friend using the data in the request body
-    const friend = await User.create(req.body);
-
     // Find the user by their ID and update their 'friends' array to include the new friend
     const user = await User.findOneAndUpdate(
       { _id: req.params.userId },
-      //500 error said I need username and password????
-      { email: req.body.email},
-      {username: req.body.username},
-      { $push: { friends: friend._id } }, // Assuming 'friends' is an array in your User model
+      { $push: { friends: req.params.friendId } }, // Assuming 'friends' is an array in your User model
       { runValidators: true, new: true }
     );
 
@@ -156,24 +150,25 @@ async postSingleFriend(req, res) {
   }
 },
 
-
   // delete a users's friend
   async deleteSingleFriend(req, res) {
     try {
-      const thought = await User.findOneAndUpdate({ _id: req.params.friendId }
-        , { $pull: { firend: req.params.friendId } },
-        { runValidators: true, new: true })
-        .select('-__v');
+    // Find the user by their ID and update their 'friends' array to include the new friend
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends: req.params.friendId } }, // Assuming 'friends' is an array in your User model
+      { runValidators: true, new: true }
+    );
 
-      res.json(thought);
-
-
-    } catch (err) {
-      console.log(err);
-      res.status(500).json(err);
+    if (!user) {
+      return res.status(404).json({ message: 'No User with that ID' });
     }
-  },
 
+    res.json(user);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+  },
 };
 
 
